@@ -17,7 +17,7 @@ services:
   mongo:
     image: mongo:4.4
     volumes:
-      - db:/data/db
+      - mongodb:/data/db
     restart: unless-stopped
     environment:
       - MONGO_INITDB_DATABASE=coordinator
@@ -29,58 +29,45 @@ services:
     ports:
       - "6379:6379"
     
-#   any-coordinator:
-#     image: docker.io/sambouwer/any-sync-coordinator:0.33.3-1
-#     networks:
-#       any-network:
-#         ipv4_address: 172.18.0.2
-#     ports:
-#       - "4830:4830" # coordinator
-#     restart: unless-stopped
-#     stdin_open: true
-#     tty: true
-#     build:
-#       context: .
-#       target: any-sync-coordinator
+  coordinator:
+    build:
+      context: .
+      target: any-sync-coordinator
+    ports:
+      - "4830:4830"
+    restart: unless-stopped
+    volumes:
+      - ./configurations/coordinator.yml:/etc/anytype/coordinator.yml
+    environment:
+      - ANYTYPE_LOG_LEVEL="grpc=TRACE"
+      - ANYTYPE_GRPC_LOG=3
 
-#   any-syncnode:
-#     container_name: any-sync-node
-#     image: docker.io/sambouwer/any-sync-node:0.33.3-1
-#     networks:
-#       any-network:
-#         ipv4_address: 172.18.0.3
-#     ports:
-#       - "4430:4430" # sync node
-#     restart: unless-stopped
-#     stdin_open: true
-#     tty: true
-#     build:
-#       context: .
-#       target: any-sync-node
+  node:
+    build:
+      context: .
+      target: any-sync-node
+    ports:
+      - "4430:4430"
+    restart: unless-stopped
+    volumes:
+      - ./configurations/sync_1.yml:/etc/anytype/sync_1.yml
+    environment:
+      - ANYTYPE_LOG_LEVEL="grpc=TRACE"
+      - ANYTYPE_GRPC_LOG=3
 
-#   any-filenode:
-#     container_name: any-sync-filenode
-#     image: docker.io/sambouwer/any-sync-filenode:0.33.3-1
-#     networks:
-#       any-network:
-#         ipv4_address: 172.18.0.4
-#     ports:
-#       - "4730:4730" # filenode
-#     restart: unless-stopped
-#     stdin_open: true
-#     tty: true
-#     build:
-#       context: .
-#       target: any-sync-filenode
+  filenode:
+    build:
+      context: .
+      target: any-sync-filenode
+    ports:
+      - "4730:4730"
+    restart: unless-stopped
+    volumes:
+      - ./configurations/file_1.yml:/etc/anytype/file_1.yml
+    environment:
+      - ANYTYPE_LOG_LEVEL="grpc=TRACE"
+      - ANYTYPE_GRPC_LOG=3
 
 volumes:
   s3:
-  db:
-
-# networks:
-#   any-network:
-#     driver: bridge
-#     ipam:
-#       driver: default
-#       config:
-#         - subnet: "172.18.0.0/24"
+  mongodb:
