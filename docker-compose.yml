@@ -1,0 +1,86 @@
+version: "3.8"
+
+services:
+  minio:
+    image: quay.io/minio/minio
+    command: server --console-address ":9001" /data
+    ports: 
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - s3:/data
+    restart: unless-stopped
+    environment:
+      - MINIO_ROOT_USER=miniorootuser
+      - MINIO_ROOT_PASSWORD=miniorootpassword
+      
+  mongo:
+    image: mongo:4.4
+    volumes:
+      - db:/data/db
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=coordinator
+      - MONGO_INITDB_ROOT_USERNAME=mongorootuser
+      - MONGO_INITDB_ROOT_PASSWORD=mongorootpassword
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    
+#   any-coordinator:
+#     image: docker.io/sambouwer/any-sync-coordinator:0.33.3-1
+#     networks:
+#       any-network:
+#         ipv4_address: 172.18.0.2
+#     ports:
+#       - "4830:4830" # coordinator
+#     restart: unless-stopped
+#     stdin_open: true
+#     tty: true
+#     build:
+#       context: .
+#       target: any-sync-coordinator
+
+#   any-syncnode:
+#     container_name: any-sync-node
+#     image: docker.io/sambouwer/any-sync-node:0.33.3-1
+#     networks:
+#       any-network:
+#         ipv4_address: 172.18.0.3
+#     ports:
+#       - "4430:4430" # sync node
+#     restart: unless-stopped
+#     stdin_open: true
+#     tty: true
+#     build:
+#       context: .
+#       target: any-sync-node
+
+#   any-filenode:
+#     container_name: any-sync-filenode
+#     image: docker.io/sambouwer/any-sync-filenode:0.33.3-1
+#     networks:
+#       any-network:
+#         ipv4_address: 172.18.0.4
+#     ports:
+#       - "4730:4730" # filenode
+#     restart: unless-stopped
+#     stdin_open: true
+#     tty: true
+#     build:
+#       context: .
+#       target: any-sync-filenode
+
+volumes:
+  s3:
+  db:
+
+# networks:
+#   any-network:
+#     driver: bridge
+#     ipam:
+#       driver: default
+#       config:
+#         - subnet: "172.18.0.0/24"
