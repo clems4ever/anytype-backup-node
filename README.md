@@ -67,6 +67,10 @@ your changes yourself and prove it with some automated tests or at least some sc
 
 - Introduce commands to build the clients from the generated configuration. (Or maybe not if clients can be customized instead in the future).
 
+## Sponsorship
+
+You can buy me a beer in the crypto sphere on Ethereum at 0x2e6Ae44ed50A9B8ad616b4e6f93414fae0067977.
+
 ## License
 
 This project is licensed under the [MIT license](./LICENSE).
