@@ -69,7 +69,7 @@ your changes yourself and prove it with some automated tests or at least some sc
 
 ## Sponsorship
 
-You can buy me a beer in the crypto sphere on Ethereum at 0x2e6Ae44ed50A9B8ad616b4e6f93414fae0067977.
+You can buy me a beer in the crypto sphere on Ethereum or Polygon at [0x92a9C9e6a418712252fB5996CfE3391a7baBBffB](https://etherscan.io/address/0x92a9C9e6a418712252fB5996CfE3391a7baBBffB).
 
 ## License
 
