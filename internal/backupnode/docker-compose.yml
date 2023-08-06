@@ -12,9 +12,6 @@ services:
     restart: unless-stopped
     env_file:
       - backupnode.env
-
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       
   mongo:
     image: mongo:4.4
@@ -25,8 +22,8 @@ services:
     restart: unless-stopped
     environment:
       - MONGO_INITDB_DATABASE=coordinator
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+    env_file:
+      - backupnode.env
 
   redis:
     image: redis

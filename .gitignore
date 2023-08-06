@@ -4,4 +4,7 @@ configurations/
 /config.yml
 dist/
 anytype-backup-node*
-backupnode.env
+
+/backupnode.env
+/docker-compose.yml
+/Dockerfile
