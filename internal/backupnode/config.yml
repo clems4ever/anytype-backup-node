@@ -3,7 +3,7 @@ config_dir: configurations
 
 # IP of the host where the backup node will run.
 # Note that, given how anytype services work, this IP must be accessible by your
-# devices. Hence, it can be a public IP or an IP from a LAN.
+# devices. Hence, it can be a public IP or an IP from a LAN in which your devices are.
 host_ip: 192.168.1.1
 
 # Credentials for the minio service.
