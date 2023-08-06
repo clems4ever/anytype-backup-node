@@ -40,16 +40,16 @@ var initializeNodeCmd = cobra.Command{
 
 func main() {
 	generateNetconfCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
-	generateNetconfCmd.MarkFlagRequired("c")
+	generateNetconfCmd.MarkFlagRequired("config")
 
 	rootCmd.AddCommand(&generateNetconfCmd)
 
 	bootstrapNodeCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
-	bootstrapNodeCmd.MarkFlagRequired("c")
+	bootstrapNodeCmd.MarkFlagRequired("config")
 	rootCmd.AddCommand(&bootstrapNodeCmd)
 
 	initializeNodeCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
-	initializeNodeCmd.MarkFlagRequired("c")
+	initializeNodeCmd.MarkFlagRequired("config")
 	rootCmd.AddCommand(&initializeNodeCmd)
 
 	err := rootCmd.Execute()
