@@ -42,11 +42,7 @@ the infrastructure.
 ./anytype-backup-node_Linux_x86_64 init
 ```
 
-This generated configuration file is dedicated to this project and has nothing to do with the network configuration of anytype.
-It is used to customize the generation of anytype's configuration though.
-
 Once the configuration file is ready, run the following command to bootstrap the services of the backup node.
-This will generate the configuration files for anytype, build the docker containers and spawn them.
 
 ```bash
 ./anytype-backup-node_Linux_x86_64 bootstrap
