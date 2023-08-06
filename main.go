@@ -9,6 +9,8 @@ import (
 
 var configPathFlag string
 
+var defaultConfigPath = "config.yml"
+
 var rootCmd = cobra.Command{
 	Use:   "anytype-backup-node",
 	Short: "Start an anytype backup node",
@@ -63,15 +65,15 @@ func main() {
 	rootCmd.AddCommand(&initCmd)
 	rootCmd.AddCommand(&manualCmd)
 
-	generateNetconfCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
+	generateNetconfCmd.Flags().StringVarP(&configPathFlag, "config", "c", defaultConfigPath, "path to the config file")
 	generateNetconfCmd.MarkFlagRequired("config")
 	manualCmd.AddCommand(&generateNetconfCmd)
 
-	bootstrapNodeCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
+	bootstrapNodeCmd.Flags().StringVarP(&configPathFlag, "config", "c", defaultConfigPath, "path to the config file")
 	bootstrapNodeCmd.MarkFlagRequired("config")
 	rootCmd.AddCommand(&bootstrapNodeCmd)
 
-	configureCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
+	configureCmd.Flags().StringVarP(&configPathFlag, "config", "c", defaultConfigPath, "path to the config file")
 	configureCmd.MarkFlagRequired("config")
 	manualCmd.AddCommand(&configureCmd)
 
