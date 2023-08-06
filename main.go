@@ -14,9 +14,26 @@ var rootCmd = cobra.Command{
 	Short: "Start an anytype backup node",
 }
 
+var manualCmd = cobra.Command{
+	Use:   "manual",
+	Short: "Some commands that can be run manually if necessary.",
+	Long:  "Some commands that can be run manually if you know what you are doing, otherwise let the bootstrap command handle it for you.",
+}
+
+var initCmd = cobra.Command{
+	Use:   "init",
+	Short: "Generate a default configuration file that can be edited before bootstraping the infrastructure",
+	Run: func(cmd *cobra.Command, args []string) {
+		backupnode.Init()
+	},
+}
+
 var generateNetconfCmd = cobra.Command{
 	Use:   "generate-netconf",
 	Short: "Generate the network configuration of an anytype backup node",
+	Long: "Generate the network configuration of an anytype backup node." +
+		"This is only useful if you want to manually generate the configuration, " +
+		"otherwise you can let the bootstrap command do it for you.",
 	Run: func(cmd *cobra.Command, args []string) {
 		backupnode.GenerateConfig(configPathFlag)
 	},
@@ -24,33 +41,39 @@ var generateNetconfCmd = cobra.Command{
 
 var bootstrapNodeCmd = cobra.Command{
 	Use:   "bootstrap",
-	Short: "Bootstrap a backup node",
+	Short: "Bootstrap a backup node after you have generated a config file with the init command",
+	Long:  "Bootstrap a backup node from the configuration file",
 	Run: func(cmd *cobra.Command, args []string) {
 		backupnode.Bootstrap(cmd.Context(), configPathFlag)
 	},
 }
 
-var initializeNodeCmd = cobra.Command{
-	Use:   "initialize",
-	Short: "Initialize the backup node",
+var configureCmd = cobra.Command{
+	Use:   "configure",
+	Short: "Configure the infrastructure after it has been spawned",
+	Long: "Configure the infrastructure after it has been spawned. " +
+		"This is only useful if you have to do it manually, otherwise you can let " +
+		"the bootstrap command handle it for you.",
 	Run: func(cmd *cobra.Command, args []string) {
 		backupnode.Initialize(cmd.Context(), configPathFlag)
 	},
 }
 
 func main() {
+	rootCmd.AddCommand(&initCmd)
+	rootCmd.AddCommand(&manualCmd)
+
 	generateNetconfCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
 	generateNetconfCmd.MarkFlagRequired("config")
-
-	rootCmd.AddCommand(&generateNetconfCmd)
+	manualCmd.AddCommand(&generateNetconfCmd)
 
 	bootstrapNodeCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
 	bootstrapNodeCmd.MarkFlagRequired("config")
 	rootCmd.AddCommand(&bootstrapNodeCmd)
 
-	initializeNodeCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
-	initializeNodeCmd.MarkFlagRequired("config")
-	rootCmd.AddCommand(&initializeNodeCmd)
+	configureCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
+	configureCmd.MarkFlagRequired("config")
+	manualCmd.AddCommand(&configureCmd)
 
 	err := rootCmd.Execute()
 	if err != nil {

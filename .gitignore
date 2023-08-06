@@ -1,4 +1,5 @@
 configurations/
 
-.config.yml
+/.config.yml
+/config.yml
 dist/

@@ -1,4 +1,4 @@
-# Directory where the configuration files are generated
+# Directory where the any-sync network configuration files are generated
 config_dir: configurations
 
 # IP of the host where the backup node will run.

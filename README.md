@@ -6,13 +6,17 @@ private on your own machines. Keeping them on AnyType servers is fine since they
 encrypted, but having your own backup node provides a second layer of security in case
 a vulnerability in the encryption done by AnyType.
 
-## Usage
+## Getting Started
 
-Make sure Docker and docker-compose are installed on your machine before running the
-next command.
+First make sure Docker and docker-compose are installed on your machine before anything
+else.
 
+Then, download the latest release of [anytype-backup-node](https://github.com/clems4ever/anytype-backup-node/releases).
+On Linux and Mac, make sure you make the binary executable.
+
+You can now run the following command:
 ```
-./start_backup_node
+./anytype-backup-node_Linux_x86_64 bootstrap -c config.yml
 ```
 
 At this point, a configuration for your setup has been generated and used for
