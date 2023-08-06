@@ -17,7 +17,7 @@ var dockerfile string
 var dockerComposeFile string
 
 func dumpFile(path string, content string) {
-	err := os.WriteFile(path, []byte(dockerfile), 0600)
+	err := os.WriteFile(path, []byte(content), 0600)
 	if err != nil {
 		log.Fatal(err)
 	}
