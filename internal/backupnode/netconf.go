@@ -47,7 +47,7 @@ func writeConfig(filePath string, cfg any) {
 	}
 }
 
-func GenerateConfig(configFilePath string) {
+func GenerateNetworkConfig(configFilePath string) {
 	b, err := os.ReadFile(configFilePath)
 	if err != nil {
 		log.Fatal(err)

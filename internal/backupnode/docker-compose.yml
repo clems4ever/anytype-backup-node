@@ -10,7 +10,9 @@ services:
     volumes:
       - s3:/data
     restart: unless-stopped
-    environment:
+    env_file:
+      - backupnode.env
+
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       

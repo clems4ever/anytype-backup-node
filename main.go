@@ -31,9 +31,9 @@ var initCmd = cobra.Command{
 }
 
 var generateNetconfCmd = cobra.Command{
-	Use:   "generate-netconf",
-	Short: "Generate the network configuration of an anytype backup node",
-	Long: "Generate the network configuration of an anytype backup node." +
+	Use:   "generate",
+	Short: "Generate the configuration of an anytype backup node",
+	Long: "Generate the configuration of an anytype backup node." +
 		"This is only useful if you want to manually generate the configuration, " +
 		"otherwise you can let the bootstrap command do it for you.",
 	Run: func(cmd *cobra.Command, args []string) {

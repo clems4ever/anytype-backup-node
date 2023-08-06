@@ -13,12 +13,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func dockerCompose(args []string, env []string) {
+func dockerCompose(args ...string) {
 	cmd := exec.Command("docker-compose", args...)
 
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	cmd.Env = env
 
 	err := cmd.Run()
 	if err != nil {
@@ -26,8 +25,8 @@ func dockerCompose(args []string, env []string) {
 	}
 }
 
-func Bootstrap(ctx context.Context, configPath string) {
-	GenerateConfig(configPath)
+func GenerateConfig(configPath string) {
+	GenerateNetworkConfig(configPath)
 
 	b, err := os.ReadFile(configPath)
 	if err != nil {
@@ -40,13 +39,18 @@ func Bootstrap(ctx context.Context, configPath string) {
 		log.Fatal(err)
 	}
 
-	envs := os.Environ()
-	envs = append(envs, fmt.Sprintf("MINIO_ROOT_USER=%s", cfg.MinioUser))
-	envs = append(envs, fmt.Sprintf("MINIO_ROOT_PASSWORD=%s", cfg.MinioPassword))
-	envs = append(envs, fmt.Sprintf("MONGO_ROOT_USERNAME=%s", cfg.MongoUser))
-	envs = append(envs, fmt.Sprintf("MONGO_ROOT_PASSWORD=%s", cfg.MongoPassword))
+	envFileContent := ""
+	envFileContent += fmt.Sprintf("MINIO_ROOT_USER=%s", cfg.MinioUser) + "\n"
+	envFileContent += fmt.Sprintf("MINIO_ROOT_PASSWORD=%s", cfg.MinioPassword) + "\n"
+	envFileContent += fmt.Sprintf("MONGO_INITDB_ROOT_USERNAME=%s", cfg.MongoUser) + "\n"
+	envFileContent += fmt.Sprintf("MONGO_INITDB_ROOT_PASSWORD=%s", cfg.MongoPassword) + "\n"
+	dumpFile("backupnode.env", envFileContent)
+}
 
-	dockerCompose([]string{"up", "--build", "-d"}, envs)
+func Bootstrap(ctx context.Context, configPath string) {
+	GenerateConfig(configPath)
+
+	dockerCompose("up", "--build", "-d")
 
 	fmt.Println("Waiting for the infrastructure to boot...")
 	time.Sleep(time.Second)

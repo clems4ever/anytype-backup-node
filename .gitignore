@@ -3,3 +3,5 @@ configurations/
 /.config.yml
 /config.yml
 dist/
+anytype-backup-node*
+backupnode.env
