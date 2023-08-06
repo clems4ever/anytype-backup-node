@@ -35,7 +35,7 @@ On Linux and Mac, make sure you make the binary executable with
 chmod +x anytype-backup-node_Linux_x86_64
 ```
 
-You can now run the following command to generate a default configuration file `config.yml` that you can edit before spawning
+You can now run the following command to generate a [default configuration](./internal/backupnode/config.yml) that you can edit before spawning
 the infrastructure.
 
 ```bash
