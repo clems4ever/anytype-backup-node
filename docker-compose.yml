@@ -11,8 +11,8 @@ services:
       - s3:/data
     restart: unless-stopped
     environment:
-      - MINIO_ROOT_USER=miniorootuser
-      - MINIO_ROOT_PASSWORD=miniorootpassword
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       
   mongo:
     image: mongo:4.4
@@ -23,8 +23,8 @@ services:
     restart: unless-stopped
     environment:
       - MONGO_INITDB_DATABASE=coordinator
-      - MONGO_INITDB_ROOT_USERNAME=mongorootuser
-      - MONGO_INITDB_ROOT_PASSWORD=mongorootpassword
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
 
   redis:
     image: redis

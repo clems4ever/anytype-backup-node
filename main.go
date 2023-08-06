@@ -26,7 +26,7 @@ var bootstrapNodeCmd = cobra.Command{
 	Use:   "bootstrap",
 	Short: "Bootstrap a backup node",
 	Run: func(cmd *cobra.Command, args []string) {
-		backupnode.Bootstrap(configPathFlag)
+		backupnode.Bootstrap(cmd.Context(), configPathFlag)
 	},
 }
 

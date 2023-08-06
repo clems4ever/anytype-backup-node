@@ -5,3 +5,11 @@ config_dir: configurations
 # Note that, given how anytype services work, this IP must be accessible by your
 # devices. Hence, it can be a public IP or an IP from a LAN.
 host_ip: 192.168.1.1
+
+# Credentials for the minio service.
+minio_user: minio
+minio_password: a_strong_password
+
+# Credentials for the mongo service.
+mongo_user: mongo
+mongo_password: another_strong_password

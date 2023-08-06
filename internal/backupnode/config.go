@@ -13,6 +13,12 @@ import (
 type Config struct {
 	HostIP    string `yaml:"host_ip"`
 	ConfigDir string `yaml:"config_dir"`
+
+	MinioUser     string `yaml:"minio_user"`
+	MinioPassword string `yaml:"minio_password"`
+
+	MongoUser     string `yaml:"mongo_user"`
+	MongoPassword string `yaml:"mongo_password"`
 }
 
 func readConfig(filePath string, cfgPtr any) {
@@ -87,7 +93,7 @@ func GenerateConfig(configFilePath string) {
 	coordinatorConfig.Network.Nodes[0].Addresses[0] = coordinatorAddr
 	coordinatorConfig.Network.Nodes[1].Addresses[0] = syncNodeAddr
 	coordinatorConfig.Network.Nodes[2].Addresses[0] = fileNodeAddr
-	coordinatorConfig.Mongo.Connect = "mongodb://mongorootuser:mongorootpassword@mongo:27017"
+	coordinatorConfig.Mongo.Connect = fmt.Sprintf("mongodb://%s:%s@mongo:27017", cfg.MongoUser, cfg.MongoPassword)
 
 	syncNodeConfig.Yamux.ListenAddrs[0] = "0.0.0.0:4430"
 	syncNodeConfig.Network.Nodes[0].Addresses[0] = coordinatorAddr
@@ -99,8 +105,8 @@ func GenerateConfig(configFilePath string) {
 	fileNodeConfig.Network.Nodes[1].Addresses[0] = syncNodeAddr
 	fileNodeConfig.Network.Nodes[2].Addresses[0] = fileNodeAddr
 	fileNodeConfig.S3Store.Endpoint = "http://minio:9000/"
-	fileNodeConfig.S3Store.Credentials.AccessKey = "miniorootuser"
-	fileNodeConfig.S3Store.Credentials.SecretKey = "miniorootpassword"
+	fileNodeConfig.S3Store.Credentials.AccessKey = cfg.MinioUser
+	fileNodeConfig.S3Store.Credentials.SecretKey = cfg.MinioPassword
 	fileNodeConfig.S3Store.ForcePathStyle = true
 	fileNodeConfig.Redis.URL = "redis://redis:6379/?dial_timeout=3&db=1&read_timeout=6s&max_retries=2"
 

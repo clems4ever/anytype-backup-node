@@ -6,17 +6,19 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"gopkg.in/yaml.v3"
 )
 
-func dockerCompose(args ...string) {
+func dockerCompose(args []string, env []string) {
 	cmd := exec.Command("docker-compose", args...)
 
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	cmd.Env = env
 
 	err := cmd.Run()
 	if err != nil {
@@ -24,10 +26,32 @@ func dockerCompose(args ...string) {
 	}
 }
 
-func Bootstrap(configPath string) {
+func Bootstrap(ctx context.Context, configPath string) {
 	GenerateConfig(configPath)
 
-	dockerCompose("up", "--build", "-d")
+	b, err := os.ReadFile(configPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var cfg Config
+	err = yaml.Unmarshal(b, &cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	envs := os.Environ()
+	envs = append(envs, fmt.Sprintf("MINIO_ROOT_USER=%s", cfg.MinioUser))
+	envs = append(envs, fmt.Sprintf("MINIO_ROOT_PASSWORD=%s", cfg.MinioPassword))
+	envs = append(envs, fmt.Sprintf("MONGO_ROOT_USERNAME=%s", cfg.MongoUser))
+	envs = append(envs, fmt.Sprintf("MONGO_ROOT_PASSWORD=%s", cfg.MongoPassword))
+
+	dockerCompose([]string{"up", "--build", "-d"}, envs)
+
+	fmt.Println("Waiting for the infrastructure to boot...")
+	time.Sleep(time.Second)
+
+	Initialize(ctx, configPath)
 }
 
 func Initialize(ctx context.Context, configPath string) {
@@ -43,8 +67,8 @@ func Initialize(ctx context.Context, configPath string) {
 	}
 
 	endpoint := fmt.Sprintf("%s:9000", cfg.HostIP)
-	accessKeyID := "miniorootuser"
-	secretAccessKey := "miniorootpassword"
+	accessKeyID := cfg.MinioUser
+	secretAccessKey := cfg.MinioPassword
 
 	// Initialize minio client object.
 	minioClient, err := minio.New(endpoint, &minio.Options{
@@ -67,6 +91,6 @@ func Initialize(ctx context.Context, configPath string) {
 			log.Fatalln(err)
 		}
 	} else {
-		log.Printf("Successfully created %s\n", bucketName)
+		log.Printf("Successfully created bucket %s in minio\n", bucketName)
 	}
 }
