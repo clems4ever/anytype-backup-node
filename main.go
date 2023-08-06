@@ -2,85 +2,58 @@ package main
 
 import (
 	"log"
-	"os"
-	"path/filepath"
 
-	"github.com/anyproto/any-sync-tools/any-sync-network/cmd"
-	"gopkg.in/yaml.v3"
+	"github.com/clems4ever/anytype-backup-node/internal/backupnode"
+	"github.com/spf13/cobra"
 )
 
-func readConfig(filePath string, cfgPtr any) {
-	configFile, err := os.OpenFile(filePath, os.O_RDONLY, 0600)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer configFile.Close()
+var configPathFlag string
 
-	err = yaml.NewDecoder(configFile).Decode(cfgPtr)
-	if err != nil {
-		log.Fatal(err)
-	}
+var rootCmd = cobra.Command{
+	Use:   "anytype-backup-node",
+	Short: "Start an anytype backup node",
 }
 
-func writeConfig(filePath string, cfg any) {
-	configFile, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, 0600)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer configFile.Close()
+var generateNetconfCmd = cobra.Command{
+	Use:   "generate-netconf",
+	Short: "Generate the network configuration of an anytype backup node",
+	Run: func(cmd *cobra.Command, args []string) {
+		backupnode.GenerateConfig(configPathFlag)
+	},
+}
 
-	err = yaml.NewEncoder(configFile).Encode(cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
+var bootstrapNodeCmd = cobra.Command{
+	Use:   "bootstrap",
+	Short: "Bootstrap a backup node",
+	Run: func(cmd *cobra.Command, args []string) {
+		backupnode.Bootstrap(configPathFlag)
+	},
+}
+
+var initializeNodeCmd = cobra.Command{
+	Use:   "initialize",
+	Short: "Initialize the backup node",
+	Run: func(cmd *cobra.Command, args []string) {
+		backupnode.Initialize(cmd.Context(), configPathFlag)
+	},
 }
 
 func main() {
-	configurationsDir := "configurations"
+	generateNetconfCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
+	generateNetconfCmd.MarkFlagRequired("c")
 
-	cmd.CreateConfig(configurationsDir, true)
+	rootCmd.AddCommand(&generateNetconfCmd)
 
-	coordinatorConfigPath := filepath.Join(configurationsDir, "coordinator.yml")
-	syncNodeConfigPath := filepath.Join(configurationsDir, "sync_1.yml")
-	fileNodeConfigPath := filepath.Join(configurationsDir, "file_1.yml")
-	heartConfigPath := filepath.Join(configurationsDir, "heart.yml")
+	bootstrapNodeCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
+	bootstrapNodeCmd.MarkFlagRequired("c")
+	rootCmd.AddCommand(&bootstrapNodeCmd)
 
-	coordinatorConfig := cmd.CoordinatorNodeConfig{}
-	readConfig(coordinatorConfigPath, &coordinatorConfig)
-	syncNodeConfig := cmd.SyncNodeConfig{}
-	readConfig(syncNodeConfigPath, &syncNodeConfig)
-	fileNodeConfig := cmd.FileNodeConfig{}
-	readConfig(fileNodeConfigPath, &fileNodeConfig)
-	heartConfig := cmd.HeartConfig{}
-	readConfig(heartConfigPath, &heartConfig)
+	initializeNodeCmd.Flags().StringVarP(&configPathFlag, "config", "c", "", "path to the config file")
+	initializeNodeCmd.MarkFlagRequired("c")
+	rootCmd.AddCommand(&initializeNodeCmd)
 
-	coordinatorAddr := "coordinator:4830"
-	fileNodeAddr := "filenode:4730"
-	syncNodeAddr := "node:4430"
-	coordinatorConfig.Yamux.ListenAddrs[0] = "0.0.0.0:4830"
-	coordinatorConfig.Network.Nodes[0].Addresses[0] = coordinatorAddr
-	coordinatorConfig.Network.Nodes[1].Addresses[0] = syncNodeAddr
-	coordinatorConfig.Network.Nodes[2].Addresses[0] = fileNodeAddr
-	coordinatorConfig.Mongo.Connect = "mongodb://mongorootuser:mongorootpassword@mongo:27017"
-
-	syncNodeConfig.Yamux.ListenAddrs[0] = "0.0.0.0:4430"
-	syncNodeConfig.Network.Nodes[0].Addresses[0] = coordinatorAddr
-	syncNodeConfig.Network.Nodes[1].Addresses[0] = syncNodeAddr
-	syncNodeConfig.Network.Nodes[2].Addresses[0] = fileNodeAddr
-
-	fileNodeConfig.Yamux.ListenAddrs[0] = "0.0.0.0:4730"
-	fileNodeConfig.Network.Nodes[0].Addresses[0] = coordinatorAddr
-	fileNodeConfig.Network.Nodes[1].Addresses[0] = syncNodeAddr
-	fileNodeConfig.Network.Nodes[2].Addresses[0] = fileNodeAddr
-	fileNodeConfig.S3Store.Endpoint = "minio:9000"
-	fileNodeConfig.Redis.URL = "redis://redis:6379/?dial_timeout=3&db=1&read_timeout=6s&max_retries=2"
-
-	heartConfig.Nodes[0].Addresses[0] = "127.0.0.1:4830"
-	heartConfig.Nodes[1].Addresses[0] = "127.0.0.1:4430"
-	heartConfig.Nodes[2].Addresses[0] = "127.0.0.1:4730"
-
-	writeConfig(coordinatorConfigPath, coordinatorConfig)
-	writeConfig(syncNodeConfigPath, syncNodeConfig)
-	writeConfig(fileNodeConfigPath, fileNodeConfig)
-	writeConfig(heartConfigPath, heartConfig)
+	err := rootCmd.Execute()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
