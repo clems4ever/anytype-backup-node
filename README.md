@@ -3,17 +3,20 @@
 [AnyType](https://anytype.io/) is this incredible note-taking app that was released in the
 opensource.
 
-This project aims to spawn a AnyType self-hosted backup node for keeping your personal data private on your
-own devices and network. Note that keeping the data on AnyType servers is fine in terms of security and privacy
-because it is end-to-end encrypted. However, having a self-hosted backup node provides an extra layer of
+This project aims to spawn a AnyType self-hosted dockerized backup node for keeping your personal data private on
+your own devices and network. Note that keeping the data on AnyType servers is fine in terms of security and
+privacy because it is end-to-end encrypted. However, having a self-hosted backup node provides an extra layer of
 security as well as a bigger space than 1GB for storing files but at the **non-negligible** cost of maintaining
 the infrastructure.
 
-Please note that, as easy as it is to spawn a backup node with this project, it is far from the only thing to do
-to end up with a fully working self-hosted setup. I highly advise you not to use this project if you do not have
-a deep understanding of the internals of anytype. Maintaining, i.e., fixing and upgrading this infrastructure is
+Please note that, as easy as it is to spawn a backup node with this project, it is not the only thing to do
+to end up with a fully working self-hosted setup including clients. I would highly advise not to use this project if
+you do not have a deep understanding of the internals of anytype because fixing and upgrading this infrastructure is
 not an easy thing. Moreover, you will still need to build the clients for your devices, which is definitely not a
 no-brainer.
+
+*This project is my own independant contribution to the Anytype project, therefore it is not maintained by the
+Anytype team.*
 
 ## Disclaimer of Liability
 
@@ -35,25 +38,33 @@ On Linux and Mac, make sure you make the binary executable with
 chmod +x anytype-backup-node_Linux_x86_64
 ```
 
-You can now run the following command to generate a [default configuration](./internal/backupnode/config.yml) that you can edit before spawning
-the infrastructure.
+You can now run the following command to generate a [default configuration](./internal/backupnode/config.yml) that you
+can edit before spawning the infrastructure.
 
 ```bash
+# generate the default config.yml file.
 ./anytype-backup-node_Linux_x86_64 init
 ```
 
 Once the configuration file is ready, run the following command to bootstrap the services of the backup node.
 
 ```bash
+# spawn the services.
 ./anytype-backup-node_Linux_x86_64 bootstrap
 ```
 
-Now, you should have all services running but you need to build the applications for your devices with the proper
-anytype configuration. This is not yet handled in this repository but one can refer to
-https://tech.anytype.io/how-to/self-hosting in order to check how to do it and until it is handled in the repo or
-simply made obsolete after some changes in the anytype codebase.
+Now, you should have all services running. However, as documented above you need to build the clients for your devices with
+the proper anytype configuration. The anytype configuration files including `heart.yml` are accessible for your to review in
+`configurations/` unless you modified the path in your configuration.
 
-The anytype configuration files are accessible for your to review in `configurations/` unless you modified the path.
+This project does not build the clients because the Anytype team is working on a way to  [customize the clients without rebuilding
+them](https://github.com/orgs/anyproto/discussions/17#discussioncomment-6651683) and it will be released soon enough.
+
+## Where is the Dockerfile and docker-compose.yml?
+
+The files are embedded in the go application that you can download from the
+[release tab](https://github.com/clems4ever/anytype-backup-node/releases) but if you want you can check the source of the
+[Dockerfile](./internal/backupnode/Dockerfile) and the [docker-compose.yml](./internal/backupnode/docker-compose.yml) file.
 
 ## Contributions and testing
 
@@ -65,7 +76,7 @@ your changes yourself and prove it with some automated tests or at least some sc
 
 ## Next
 
-- Introduce commands to build the clients from the generated configuration. (Or maybe not if clients can be customized instead in the future).
+- Authenticate redis
 
 ## Sponsorship
 
