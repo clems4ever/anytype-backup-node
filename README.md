@@ -80,6 +80,10 @@ your changes yourself and prove it with some automated tests or at least some sc
 
 ## Sponsorship
 
+You can thank me by sponsoring me on [Github](https://github.com/sponsors/clems4ever) 
+
+or
+
 You can buy me a beer in the crypto sphere on Ethereum or Polygon at [0x92a9C9e6a418712252fB5996CfE3391a7baBBffB](https://etherscan.io/address/0x92a9C9e6a418712252fB5996CfE3391a7baBBffB).
 
 ## License
