@@ -27,8 +27,7 @@ LABEL MAINTAINER="Clément Michaud <clement.michaud34@gmail.com>"
 
 WORKDIR /usr/app
 
-# We point to the fork until this PR is merged: https://github.com/anyproto/any-sync-filenode/pull/22
-RUN git clone --depth 1 --branch v0.3.4-s3-creds https://github.com/clems4ever/any-sync-filenode.git
+RUN git clone --depth 1 --branch v0.3.5 https://github.com/anyproto/any-sync-filenode.git
 RUN cd any-sync-filenode && make deps && make build
 
 CMD ["/usr/app/any-sync-filenode/bin/any-sync-filenode", "-c", "/etc/anytype/file_1.yml"]
